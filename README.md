@@ -6,6 +6,7 @@ Clone repository into magme folder.
 ```
 cd __MAGENTO_DIR__
 git clone https://github.com/lisi4ok/magme.git magme
+cd magme
 ```
 ============================
 Run the Shell script
