@@ -3,7 +3,7 @@
  * @package IgniteVision_Magme
  * @author  Nikola Haralamov <nikola@ignitevision.bg>
  * 
- * @todo    Add Product Inventory Attributes to export.
+ * @todo    Add Product Custom Options in export.
  */
 
 class Magme
@@ -21,8 +21,14 @@ class Magme
 		'name' => null,
 		'description' => null,
 		'short_description' => null,
+		'news_from_date' => null,
+		'news_to_date' => null,
+		'weight' => null,
 		'price' => null,
 		'special_price' => null,
+		'special_from_date' => null,
+		'special_to_date' => null,
+		'tax_class_id' => null,
 		'image' => null,
 		'small_image' => null,
 		'thumbnail' => null,
@@ -30,6 +36,34 @@ class Magme
 		'image_label' => null,
 		'small_image_label' => null,
 		'thumbnail_label' => null,
+		'manage_stock' => null,
+		'qty' => null,
+		'is_in_stock' => null,
+		/* Default Inventory Cofnig and values
+			'use_config_manage_stock' => 1,
+			'use_config_min_qty' => 1,
+			'use_config_backorders' => 1,
+			'use_config_min_sale_qty' => 1,
+			'use_config_max_sale_qty' => 1,
+			'use_config_notify_stock_qty' => 1,
+			'use_config_qty_increments' => 1,
+			'use_config_enable_qty_inc' => 1,
+			'use_config_enable_qty_increments' => 1,
+			'manage_stock' => 0,
+			'qty' => 0,
+			'is_in_stock' => 0,
+			'min_qty' => 0,
+			'backorders' => 0,
+			'min_sale_qty' => 1,
+			'max_sale_qty' => 0,
+			'notify_stock_qty' => null,
+			'stock_status_changed_auto' => 1,
+			'qty_increments' => 0,
+			'enable_qty_increments' => 0,
+			'stock_status_changed_automatically' => 1,
+		 */
+		// 'has_options' => null,
+		// 'required_options' => null,
 	);
 
 	private $_additionalAttributes = array();
@@ -120,7 +154,19 @@ class Magme
 		}
 		return $attributeSetId;
 	}
-	
+
+	public function getProductStockLabel($availability)
+	{
+		$stocks = array(
+			Mage_CatalogInventory_Model_Stock::STOCK_IN_STOCK => Mage::helper('cataloginventory')->__('In Stock'),
+			Mage_CatalogInventory_Model_Stock::STOCK_OUT_OF_STOCK => Mage::helper('cataloginventory')->__('Out of Stock'),
+		);
+		if (array_key_exists($availability, $stocks)) {
+			return $stocks[$availability];
+		}
+		return $availability;
+	}
+
 	public function getProductCategories($product)
 	{
 		if (!$product instanceof Mage_Catalog_Model_Product) {
@@ -163,6 +209,9 @@ class Magme
 	public function setAdditionalAttributes($attributes)
 	{
 		foreach ($attributes as $attribute) {
+			if (array_key_exists($attribute, $this->_attributesMap)) {
+				continue;
+			}
 			$this->_additionalAttributes[] = $attribute;
 		}
 		return $this;
@@ -227,8 +276,14 @@ class Magme
 			$line[] = $product->getName();
 			$line[] = $product->getDescription();
 			$line[] = $product->getShortDescription();
+			$line[] = $product->getNewsFromDate();
+			$line[] = $product->getNewsToDate();
+			$line[] = $product->getWeight();
 			$line[] = $product->getPrice();
 			$line[] = $product->getSpecialPrice();
+			$line[] = $product->getSpecialFromDate();
+			$line[] = $product->getSpecialToDate();
+			$line[] = $product->getTaxClassId();
 
 			/*
 			 * Product Images
@@ -260,6 +315,11 @@ class Magme
 			/*
 			 * Product Images
 			 */
+
+			$line[] = (string)$product->getStockItem()->getManageStock();
+			$line[] = $product->getStockItem()->getQty();
+			$line[] = $product->getStockItem()->getIsInStock();
+
 			if (!empty($additionalAttributes)) {
 				foreach ($additionalAttributes as $attribute) {
 					$line[] = $product->{'get' . $this->pascalCase($attribute)}();

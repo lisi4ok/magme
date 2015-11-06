@@ -8,7 +8,6 @@ try {
 		'kids_sizes',
 		'size',
 		'two_sizes',
-		'weight',
 	));
 	$magme->export();
 } catch (\Exception $e) {
