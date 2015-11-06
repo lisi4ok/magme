@@ -1,7 +1,7 @@
 <?php
 /**
- * @package IgniteVision_Magme
- * @author  Nikola Haralamov <nikola@ignitevision.bg>
+ * @package lisi4ok_Magme
+ * @author  Nikola Haralamov <lisi4ok@gmail.com>
  * 
  * @todo    Add Product Custom Options in export.
  */
