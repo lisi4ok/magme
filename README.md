@@ -1,0 +1,2 @@
+# magme
+Magento mass exporter
