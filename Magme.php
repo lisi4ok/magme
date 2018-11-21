@@ -113,6 +113,23 @@ class Magme
 		return $collection;
 	}
 
+	private function getSimpleProducts2($ignoreAssociatedOfConfigurable = true)
+	{
+		if (!$ignoreAssociatedOfConfigurable) {
+			return $this->getProductCollection(array('type_id' => Mage_Catalog_Model_Product_Type::TYPE_SIMPLE));
+		}
+		$collection = Mage::getResourceModel('catalog/product_collection')
+			->addAttributeToFilter('type_id', array('eq' => 'simple'))
+			->addAttributeToSelect('e.entity_id');
+		$collection->getSelect()->joinLeft(
+			array('link_table' => $collection->getTable('catalog/product_super_link')),
+			'link_table.product_id = e.entity_id',
+			array('product_id')
+		);
+		$collection->getSelect()->where('link_table.product_id IS NULL');
+		return $collection;
+	}
+
 	public function getAssociatedOfConfigurableProductIds()
 	{
 		$associatedOfConfigurableProductids = array();
